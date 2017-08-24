@@ -1,1 +1,26 @@
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+
+### Above combination will ignore all files without extension ###
+
+# Ignore executable files
+*.[oa]
+*.out
+
+# Ignore Python bytecode file
 *.pyc
+
+# Ignore all files in these  directories
+.texpadtmp/
+downloads/
+build/
+
+# Ignore swap files
+*~
+.DS_Store
