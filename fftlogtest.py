@@ -1,4 +1,4 @@
-
+ 
 # coding: utf-8
 
 # # FFTLog
@@ -93,7 +93,6 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-get_ipython().magic('matplotlib inline')
 plt.style.use('ggplot')
 mpl.rcParams.update({'font.size': 16})
 
@@ -105,11 +104,11 @@ mpl.rcParams.update({'font.size': 16})
 # In[2]:
 
 # Range of periodic interval
-logrmin = -4
-logrmax = 4
+logrmin = -4.0
+logrmax = 4.0
 
 # Number of points (Max 4096)
-n = 64
+n = 128
 
 # Order mu of Bessel function
 mu = 0

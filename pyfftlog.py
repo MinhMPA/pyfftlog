@@ -42,13 +42,13 @@ Transform) with a power law bias (k r)^q
 
             infinity
             /           q
-    ã(k) = | a(r) (k r)  J  (k r) k dr
+    a(k) = | a(r) (k r)  J  (k r) k dr
             /              mu
             0
 
             infinity
             /           -q
-    a(r) = | ã(k) (k r)   J  (k r) r dk
+    a(r) = | a(k) (k r)   J  (k r) r dk
             /               mu
             0
 
@@ -59,9 +59,9 @@ The input array a_j is a periodic sequence of length n, uniformly
 logarithmically spaced with spacing dlnr
     a_j = a(r_j)   at   r_j = r_c exp[(j-j_c) dlnr]
 centred about the point r_c.  The central index j_c = (n+1)/2 is 1/2 integral
-if n is even.  Similarly, the output array ã_j is a periodic sequence of length
+if n is even.  Similarly, the output array a_j is a periodic sequence of length
 n, also uniformly logarithmically spaced with spacing dlnr
-    ã_j = ã(k_j)   at   k_j = k_c exp[(j-j_c) dlnr]
+    A_j = A(k_j)   at   k_j = k_c exp[(j-j_c) dlnr]
 centred about the point k_c.
 
 The centre points r_c and k_c of the periodic intervals may be chosen
@@ -76,20 +76,20 @@ The FFTLog algorithm is (see Hamilton 2000):
     where
         U_mu(x) = 2^x Gamma[(mu+1+x)/2] / Gamma[(mu+1-x)/2]
     to obtain c_m u_m ;
-3. FFT c_m u_m back to obtain the discrete Hankel transform ã_j .
+3. FFT c_m u_m back to obtain the discrete Hankel transform a_j .
 
 ----------------------------------------------------------------------
 The Fourier sine and cosine transforms
 
                     infinity
                         /
-    Ã(k) = sqrt(2/pi) | A(r) sin(k r) dr
+    a(k) = sqrt(2/pi) | a(r) sin(k r) dr
                         /
                     0
 
                     infinity
                         /
-    Ã(k) = sqrt(2/pi) | A(r) cos(k r) dr
+    a(k) = sqrt(2/pi) | a(r) cos(k r) dr
                         /
                     0
 
@@ -104,14 +104,14 @@ since
 
 The Fourier transforms may be done by making the substitutions
                 q-(1/2)                      -q-(1/2)
-    A(r) = a(r) r          and   Ã(k) = ã(k) k
+    A(r) = a(r) r          and   A(k) = a(k) k
 
 and Hankel transforming a(r) with a power law bias (k r)^q
 
             infinity
             /           q
-    ã(k) = | a(r) (k r)  J    (k r) k dr
-            /              ±1/2
+    a(k) = | a(r) (k r)  J    (k r) k dr
+            /              +1/2 or -1/2
             0
 
 Different choices of power law bias q lead to different discrete Fourier
@@ -119,7 +119,7 @@ transforms of A(r), because the assumption of periodicity of a(r) = A(r)
 r^[-q+(1/2)] is different for different q.
 
 If A(r) is a power law, A(r) proportional to r^[q-(1/2)], then applying a bias
-q yields a discrete Fourier transform Ã(k) that is exactly equal to the
+q yields a discrete Fourier transform A(k) that is exactly equal to the
 continuous Fourier transform, because then a(r) is a constant, which is a
 periodic function.
 
@@ -128,19 +128,19 @@ The Hankel transform
 
             infinity
             /
-    Ã(k) = | A(r) J  (k r) k dr
+    A(k) = | A(r) J  (k r) k dr
             /       mu
             0
 
 may be done by making the substitutions
                 q                      -q
-    A(r) = a(r) r    and   Ã(k) = ã(k) k
+    A(r) = a(r) r    and   a(k) = a(k) k
 
 and Hankel transforming a(r) with a power law bias (k r)^q
 
             infinity
             /           q
-    ã(k) = | a(r) (k r)  J  (k r) k dr
+    a(k) = | a(r) (k r)  J  (k r) k dr
             /              mu
             0
 
@@ -149,7 +149,7 @@ transforms of A(r), because the assumption of periodicity of a(r) = A(r) r^-q
 is different for different q.
 
 If A(r) is a power law, A(r) proportional to r^q, then applying a bias q yields
-a discrete Hankel transform Ã(k) that is exactly equal to the continuous Hankel
+a discrete Hankel transform A(k) that is exactly equal to the continuous Hankel
 transform, because then a(r) is a constant, which is a periodic function.
 
 ----------------------------------------------------------------------
@@ -356,7 +356,7 @@ def fhti(n, mu, dlnr, q=0, kr=1, kropt=0):
             # note +Im(zm) to get conjugate value below real axis
             arg = zp.imag + zm.imag
 
-        # first element: cos(arg) = ±1, sin(arg) = 0
+        # first element: cos(arg) = 1 or -1, sin(arg) = 0
         xsave1 = amp*np.cos(arg)
 
         # remaining elements of xsave
@@ -398,26 +398,26 @@ def fftl(a, xsave, rk=1, tdir=1):
 
                         infinity
                          /
-       Ã(k) = sqrt(2/pi) | A(r) sin(k r) dr
+       A(k) = sqrt(2/pi) | A(r) sin(k r) dr
                          /
                         0
 
                         infinity
                          /
-       Ã(k) = sqrt(2/pi) | A(r) cos(k r) dr
+       A(k) = sqrt(2/pi) | A(r) cos(k r) dr
                          /
                         0
 
     by making the substitutions
                     q-(1/2)                      -q-(1/2)
-       A(r) = a(r) r          and   Ã(k) = ã(k) k
+       A(r) = a(r) r          and   A(k) = a(k) k
 
     and applying a biased Hankel transform to a(r).
 
     The steps are:
     1. a(r) = A(r) r^[-dir*(q-.5)]
-    2. call fhtq to transform a(r) -> ã(k)
-    3. Ã(k) = ã(k) k^[-dir*(q+.5)]
+    2. call fhtq to transform a(r) -> a(k)
+    3. A(k) = a(k) k^[-dir*(q+.5)]
 
     fhti must be called before the first call to fftl, with mu = 1/2 for a sine
     transform, or mu = -1/2 for a cosine transform.
@@ -451,7 +451,7 @@ def fftl(a, xsave, rk=1, tdir=1):
     Returns
     -------
     a : array
-        Transformed array Ã(k): a(j) is Ã(k_j) at k_j = k_c exp[(j-jc) dlnr].
+        Transformed array A(k): a(j) is A(k_j) at k_j = k_c exp[(j-jc) dlnr].
 
     """
     fct = a.copy()
@@ -466,11 +466,11 @@ def fftl(a, xsave, rk=1, tdir=1):
     # a(r) = A(r) (r/rc)^[-dir*(q-.5)]
     fct *= np.exp(-tdir*(q - 0.5)*(j - jc)*dlnr)
 
-    # transform a(r) -> ã(k)
+    # transform a(r) -> a(k)
     fct = fhtq(fct, xsave, tdir)
 
-    # Ã(k) = ã(k) k^[-dir*(q+.5)] rc^[-dir*(q-.5)]
-    #      = ã(k) (k/kc)^[-dir*(q+.5)] (kc rc)^(-dir*q) (rc/kc)^(dir*.5)
+    # A(k) = a(k) k^[-dir*(q+.5)] rc^[-dir*(q-.5)]
+    #      = a(k) (k/kc)^[-dir*(q+.5)] (kc rc)^(-dir*q) (rc/kc)^(dir*.5)
     lnkr = np.log(kr)
     lnrk = np.log(rk)
     fct *= np.exp(-tdir*((q + 0.5)*(j - jc)*dlnr + q*lnkr - lnrk/2.0))
@@ -487,20 +487,20 @@ def fht(a, xsave, tdir=1):
 
              infinity
               /
-       Ã(k) = | A(r) J  (k r) k dr
+       A(k) = | A(r) J  (k r) k dr
               /       mu
              0
 
     by making the substitutions
                     q                      -q
-       A(r) = a(r) r    and   Ã(k) = ã(k) k
+       A(r) = a(r) r    and   A(k) = a(k) k
 
     and applying a biased Hankel transform to a(r).
 
     The steps are:
     1. a(r) = A(r) r^(-dir*q)
-    2. call fhtq to transform a(r) -> ã(k)
-    3. Ã(k) = ã(k) k^(-dir*q)
+    2. call fhtq to transform a(r) -> a(k)
+    3. A(k) = a(k) k^(-dir*q)
 
     fhti must be called before the first call to fht.
 
@@ -527,7 +527,7 @@ def fht(a, xsave, tdir=1):
     Returns
     -------
     a : array
-        Transformed array Ã(k): a(j) is Ã(k_j) at k_j = k_c exp[(j-jc) dlnr].
+        Transformed array A(k): a(j) is A(k_j) at k_j = k_c exp[(j-jc) dlnr].
 
     """
     fct = a.copy()
@@ -542,11 +542,11 @@ def fht(a, xsave, tdir=1):
         j = np.arange(fct.size)+1
         fct *= np.exp(-tdir*q*(j - jc)*dlnr)
 
-    # transform a(r) -> ã(k)
+    # transform a(r) -> a(k)
     fct = fhtq(fct, xsave, tdir)
 
-    # Ã(k) = ã(k) (k rc)^(-dir*q)
-    #      = ã(k) (k/kc)^(-dir*q) (kc rc)^(-dir*q)
+    # A(k) = a(k) (k rc)^(-dir*q)
+    #      = a(k) (k/kc)^(-dir*q) (kc rc)^(-dir*q)
     if q != 0:
         lnkr = np.log(kr)
         fct *= np.exp(-tdir*q*((j - jc)*dlnr + lnkr))
@@ -563,7 +563,7 @@ def fhtq(a, xsave, tdir=1):
 
              infinity
               /           q
-       ã(k) = | a(r) (k r)  J  (k r) k dr
+       a(k) = | a(r) (k r)  J  (k r) k dr
               /              mu
              0
 
@@ -590,7 +590,7 @@ def fhtq(a, xsave, tdir=1):
     Returns
     -------
     a : array
-        Transformed periodic array ã(k): a(j) is ã(k_j) at k_j = k_c exp[(j-jc)
+        Transformed periodic array a(k): a(j) is a(k_j) at k_j = k_c exp[(j-jc)
         dlnr].
 
     """
